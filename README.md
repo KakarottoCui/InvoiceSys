@@ -6,9 +6,9 @@
 
 开发环境
 
-开发工具：Eclipse、Jdk1.8、SpringBoot2.0.6版本项目
+开发工具：IDEA、Jdk1.8、SpringBoot2.0.6版本项目
 
-数据库：MySQL5.5
+数据库：MySQL5.7
 所用技术
 
      前端：BootStrap、EasyUI、JQuery、HTML5+CSS3、Ajax
