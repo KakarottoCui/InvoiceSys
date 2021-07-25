@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>电子发票管理系统—登录</title>
+<link rel="stylesheet" href="webjars/bootstrap/3.3.7-1/css/bootstrap.css" />
+<script src="static/jquery-easyui-1.5.5.3/jquery.min.js"></script>
+<script type="text/javascript">
+	$("#accredit").html("");
+	$(function(){
+		var a = window.innerHeight - 100 + "px";
+		$("#logo").css('height', a);
+		$.post("str", function(data){
+		});
+	});
+	$(window).resize(function(){
+	    var a = window.innerHeight - 100 + "px";
+		$("#logo").css('height', a);
+	});
+</script>
+<style type="text/css">
+	*{
+		margin: 0px;
+		padding: 0px;
+	}
+	#logo{
+		background: url(static/img/denglu.jpg) no-repeat;
+		background-size: cover;	
+	}
+	#denlu{
+		width: 32%;
+		padding-bottom: 40px;
+		background: #000000;
+		position:absolute;
+		margin-top: 7%;
+		margin-left: 62%;
+		border-radius: 8px;
+		opacity: 0.7;
+	}
+	#denlu form{
+		color: #DDDDDD;
+	}
+	h1{
+		font-family: "楷体";
+		margin-top: 20px;
+		color: red;
+		margin-left: 50px;
+	}
+	#password {
+		background: url(static/img/password.png) no-repeat left #fff;
+		text-indent: 1em;
+	}
+	
+	#username {
+		background: url(static/img/username.png) no-repeat left #fff;
+		text-indent: 1em;	
+	}
+	#btn{
+		border-radius: 8px;
+		width: 65%;
+		padding: 10px 0px;
+		background: #999933;
+		font-size: 20px;
+	}
+	#btn:hover{
+		color: white;
+		background: #1B6D85;
+	}
+	span:hover{
+		cursor: pointer;
+	}
+</style>
+</head>
+<body>
+	<div style="height: 100px;">
+		<img src="static/img/logo.png" height="100px" style="margin-left: 80px;"/>
+		<span style="float: right; line-height: 100px; margin-right: 80px;"><a href="login"><span class="glyphicon glyphicon-home"></span>  首页</a></span>
+		</div>
+		<div id="logo">
+			<div id="denlu">
+				<form action="login" method="post"  class="form-horizontal">
+					<h1>登录</h1><center><hr style="width: 90%;" /></center>
+					<center>
+						<p data-th-if="${param.logout}">已成功注销</p>
+						<p data-th-if="${param.error}">用户名或密码错误</p>
+						<p id="accredit" th:text="${session.str}"></p>
+					</center><br>
+					<div class="form-group">
+						<label for="user" class="col-md-3 control-label">账号：</label>
+						<div class="col-md-7">
+							<input name="username" id="username" type="text" class="form-control" placeholder="用户名">
+						</div>
+					</div><br>
+					<div class="form-group">
+						<label for="pass" class="col-md-3 control-label">密码：</label>
+						<div class="col-md-7">
+							<input name="password" id="password" type="password" class="form-control" placeholder="密码">
+						</div>
+					</div>
+					<div style="margin-left: 70%"><a href="zhmm">忘记密码？</a></div><br>
+					<center><button id="btn" type="submit">登录</button></center>
+				</form>				
+			</div>
+		</div>
+	</div>
+</body>
+</html>

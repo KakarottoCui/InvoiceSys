@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>电子发票管理系统</title>
+<link href="webjars/bootstrap/3.3.7-1/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="webjars/bootstrap/3.3.7-1/css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<script src="static/jquery-easyui-1.5.5.3/jquery.min.js"></script>
+<script src="static/layer-v3.1.1/layer/layer.js"></script>
+<script src="webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$(".carousel").carousel({
+			interval: 5000
+		});		
+	})
+	
+	function fun_tc(){
+		layer.confirm("你确定退出吗？", {
+			btn:['确定', '取消']
+		}, function(){ 
+			window.location.href="logout1";
+			layer.msg("已退出", {icon: 1});
+		});
+	}
+</script>
+</head>
+<style type="text/css">
+	*{
+		margin: 0px;
+		padding: 0px;
+	}
+	body{
+		background: url(static/img/beijingtu.png);
+	}
+	#home{
+		margin-top: 52px;
+	}
+	img{
+		width: 100%;
+		height: 600px;
+	}
+	#mytab li a{
+		cursor: pointer;
+	}
+	.container-fluid a img{
+		height: 80px;
+		margin-top: -30px;
+	}
+	#mycarousel .carousel-inner img{
+	    width: 100%;
+	    height: 450px;
+	    margin: 0 auto;
+	}
+	#home_1{
+		margin: 50px auto;
+		margin-bottom: 30px;
+	}
+	#foot{
+		padding: 30px 0px;
+		color: white;
+		text-align: center;
+		background: url(static/img/foot_1.png);
+	}
+	#home_1 .col-md-3>p{
+		padding-left: 40px; 
+		padding-top: 30px; 
+		background: #FF6600;
+		height: 120px;
+		color: white;
+		font-size: 22px;
+		margin-bottom: 0px;
+	}
+	#home_1 .col-md-3 .cont_Yellow>p{
+		background: #FF2853;
+		color: white;
+		height: 60px;
+		line-height: 60px;
+		font-size: 18px;
+		padding-left: 30px;
+	}
+	#home_1 .col-md-3 .cont_Yellow>p:hover {
+		cursor: pointer;
+	}
+	a{
+		color: white;
+	}
+}
+</style>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header" style="margin-left: 50px;">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu">
+		        	<span class="sr-only">展开导航</span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span> 
+		        </button>
+				<a class="navbar-brand" href="">电子发票管理系统</a>
+			</div>
+			
+			<div class="collapse navbar-collapse" id="menu">
+				<ul class="nav navbar-nav" sec:authorize="hasRole('ROLE_USER')">
+					<li>
+						<a href="">
+							欢迎您：
+							<span sec:authorize="!hasRole('ROLE_SYSTEM')" sec:authentication="principal.name"></span>
+						</a>
+					</li>
+				</ul>
+			
+				<ul class="nav navbar-nav navbar-right" id="mytab">
+					<li class="active"><a href=""><span class="glyphicon glyphicon-home"></span> 首页</a></li>
+					<li sec:authorize="!hasRole('ROLE_USER')" ><a href=""><span class="glyphicon glyphicon-globe"></span> 新闻资讯</a>
+					<li sec:authorize="!hasRole('ROLE_USER')" ><a href=""><span class="glyphicon glyphicon-tasks"></span> 政策法规</a>
+					<li sec:authorize="!hasRole('ROLE_USER')" ><a href="login1"><span class="glyphicon glyphicon-user"></span> 登录</a></li>
+					
+					<li sec:authorize="hasRole('ROLE_USER')"><a href="user/updata"><span class="glyphicon glyphicon-pencil"></span> 修改密码</a></li>
+					<li sec:authorize="hasRole('ROLE_USER')"><a href="invoice/all"><span class="glyphicon glyphicon-globe"></span> 电子发票管理</a></li>
+					<li onclick="fun_tc()" sec:authorize="hasRole('ROLE_USER')"><a><span class="glyphicon glyphicon-off"></span> 注销</a></li>
+					<li><a href=""></a></li>
+					<li><a href=""></a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div id="home">
+		<div class="container" id="mycarousel" style="width: 100%; padding: 0px;">
+			<div id="mycarousel-example-generic1" class="carousel slide">
+				<ol class="carousel-indicators">
+					<li data-target="#carousel-example-generic1" data-slide-to="0" class="active"></li>
+					<li data-target="#carousel-example-generic1" data-slide-to="1"></li>
+					<li data-target="#carousel-example-generic1" data-slide-to="2"></li>
+				</ol>
+				<div class="carousel-inner">
+					<div class="item active">
+						<img src="static/img/banner6.png" />
+					</div>
+					<div class="item">
+						<img src="static/img/banner5.jpg" />
+					</div>
+					<div class="item">
+						<img src="static/img/banner4_1.jpg" />
+					</div>
+				</div>
+				<a class="left carousel-control" href="#mycarousel-example-generic1" data-slide="prev">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+				</a>
+				<a class="right carousel-control" href="#mycarousel-example-generic1" data-slide="next">
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</a>
+			</div>
+		</div>
+		
+		<div id = "home_1" class="container">
+			<div class="col-md-3">
+            	<p><span class="glyphicon glyphicon-search"></span>&emsp;电子发票查验</p>
+	            <div class="cont_Yellow"><p><a href="">电子发票怎么查？</a></p></div>
+	        </div>
+			<div class="col-md-3">
+            	<p style="background: #82D2EB;"><span class="glyphicon glyphicon-fire"></span>&emsp;电子发票开具</p>
+	            <div class="cont_Yellow"><p style="background: #29C9FD;"><a href="">电子发票怎么开？</a></p></div>
+	        </div>
+			<div class="col-md-3">
+            	<p><span class="glyphicon glyphicon-list"></span>&emsp;关于我们</p>
+	            <div class="cont_Yellow"><p><a href="">关于我们</a></p></div>
+	        </div>
+			<div class="col-md-3">
+            	<p style="background: #82D2EB;"><span class="glyphicon glyphicon-briefcase"></span>&emsp;产品方案</p>
+	            <div class="cont_Yellow"><p style="background: #29C9FD;"><a href="">产品方案</a></p></div>
+	        </div>
+		</div>
+	    <div class="container" style="border: 1px dashed #000; margin-bottom: 50px; padding: 20px;">
+				<center>行业新闻</center><br><hr>
+				<p style="text-indent: 2em;">
+					电子发票，顾名思义，就是电子形式的发票。具体而言，是在购销商品、提供或接受服务，以及从事其他经营活动中，
+					开具或收取的数据电文形式的收付款凭证，是全新的无纸化发票形式。
+				</p>
+				<p style="text-indent: 2em;">
+					电子发票与传统发票的区别主要有两点：一是从传统的物理介质发展为数据电文形式；
+					二是打破了纸质发票作为会计记账凭证的传统，具备了发票会计档案电子记账的条件。从长远看，电子发票将是发票的未来发展方向。
+				</p>
+				<p style="text-indent: 2em;">
+					与传统纸质发票相比，纳税人申领、开具、流转、查验电子发票等都可以通过税务机关统一的电子发票管理系统在互联网上进行，
+					发票开具更快捷、查询更方便。”税务总局有关负责人介绍。
+				</p>
+				<p style="text-indent: 2em;">
+					据悉，2012年8月起，税务总局会同发改委、财政部等部门启动了电子发票试点工作。
+					试点工作以电子商务领域试行电子发票为主，主要应用于电商企业向不需记账报销的个人消费者开具，
+					目前试点工作在北京等10多个城市开展。
+				</p>
+				<p style="text-indent: 2em;">
+					值得注意的是，电子发票和网络发票也有所区别。网络发票是依托互联网、利用网络发票管理系统实时在线开具的普通发票，
+					开出的仍是纸质发票。较传统手工开票，虽然只是开票模式的转变，
+					但开票成本更低、填开数据真实，能够即时、准确采集和存储发票数据，用以查询验证和票表比对。
+					2013年1月，税务总局发布了《网络发票管理办法》，自2013年4月1日起施行。
+				</p>
+		</div>
+		
+		<div id="foot">
+			服务热线：18888888888<br>
+			电子发票管理系统  |  版权所有 技术支持：本人
+		</div>
+	</div>
+</body>
+</html>

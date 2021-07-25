@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>电子发票管理系统</title>
+<link href="webjars/bootstrap/3.3.7-1/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="static/css/index.css" rel="stylesheet" type="text/css">
+<script src="static/jquery-easyui-1.5.5.3/jquery.min.js"></script>
+<script src="webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+<script src="static/layer-v3.1.1/layer/layer.js"></script>
+<script type="text/javascript" src="static/js/index.js"></script>
+<script type="text/javascript">
+	function fun_tc(){
+		layer.confirm("你确定退出吗？", {
+			btn:['确定', '取消']
+		}, function(){ 
+			window.location.href="logout1";
+			layer.msg("已退出", {icon: 1});
+		});
+	}
+</script>
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top" id="nav" style="margin-bottom: 0px;">
+		<div class="navbar-header" style="background: red;">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" style="background: #F8F8F8;" data-target="#menu">
+	        	<span class="sr-only">展开导航</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span> 
+	       </button>
+			<a class="navbar-brand" id="logo" href="">电子发票管理系统</a>
+		</div>
+		
+		<div class="collapse navbar-collapse" id="menu">
+			<ul class="nav navbar-nav" id = "mytab">
+				<li><a><span class="glyphicon glyphicon-list" id="dhl"></span></a></li>
+			</ul>
+			
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href=""><span class="glyphicon glyphicon-home"></span> 首页</a></li>
+				<li class="dropdown">
+					<a href="" class="dropdown-toggle" data-toggle="dropdown">
+						<span class="glyphicon glyphicon-user"></span>
+						<span sec:authorize="hasRole('ROLE_SYSTEM')"> 开发者 </span>
+						<span sec:authorize="!hasRole('ROLE_SYSTEM')" sec:authentication="principal.name"></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu pull-right">
+						<li onclick="fun_tc()"><a><span class="glyphicon glyphicon-log-out"></span>&emsp;安全退出</a></li>
+					</ul>
+				</li>
+				<li><a></a></li>
+				<li><a></a></li>
+			</ul>
+		</div>
+	</nav>
+	<div id="dhl1">
+		<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="lessee/all">租户管理</a></p>
+		<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="accredit/all">授权管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="lesseeAdmin/all">租户管理员管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="journal/all">用户操作日志</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="invoice/statistics">统计功能</a></p>
+    	
+    	<p sec:authorize="hasRole('ROLE_ADMIN')" class="aaa"><a href="lessee/add">注册租户</a></p>
+    	<p sec:authorize="hasRole('ROLE_ADMIN')" class="aaa"><a href="lesseeAdmin/update">修改密码</a></p>
+    	<p sec:authorize="hasRole('ROLE_ADMIN')" class="aaa"><a href="user/all">用户管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_ADMIN')" class="aaa"><a href="invoice/findById">电子发票管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_ADMIN')" class="aaa"><a href="accredit/findById">软件授权信息</a></p>
+	</div>
+	<div id="home">
+		<div style="margin: 60px auto; width: 90%; font-size: 18px; font-family: '楷体'">
+    		<p><b>操作手册：</b></p>
+    		<p style="text-indent: 2em;">此电子发票管理系统分为三级关系，系统管理员，租户管理员，用户。
+    			<b style="color: red;">三者关系，系统管理员管理全部，租户管理员比如为市教育局，租户为学校，用户为老师。租户的授权期限到了，租户下的所有用户都不能登录。</b>
+    			每个租户管理员只能管理本租户内的租户和用户，用户只能管理本租户内的电子发票。</p><br>
+    		<p><b>系统管理员：</b></p>
+    		<p style="text-indent: 2em;">系统管理员有租户管理员，授权管理，租户管理员管理，用户操作日志，统计等功能，添加租户管理员默认密码为111111，可以重置租户管理员的密码为111111。</p><br>
+    		<p><b>租户管理员：</b></p>
+    		<p style="text-indent: 2em;">租户管理员有用户管理，注册租户，修改密码，电子发票管理，查看软件授权信息等功能，添加用户默认密码为111111，可以重置用户密码为111111。</p><br>
+    		<p><b>用户管理：</b></p>
+    		<p style="text-indent: 2em;">用户管理有修改密码，电子发票管理等功能，可以新增报销电子发票</p><br>
+    		<p><b>找回密码</b></p>
+    		<p style="text-indent: 2em;">找回密码只针对租户管理员，租户管理员可以通过登录的电子邮箱验证，之后重新设置密码</p>
+    	</div>
+	</div>
+</body>
+</html>

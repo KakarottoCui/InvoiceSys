@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>电子发票管理系统—租户管理</title>
+<link href="../webjars/bootstrap/3.3.7-1/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="../static/css/index.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="../static/jquery-easyui-1.5.5.3/themes/default/easyui.css" />
+<link rel="stylesheet" href="../static/jquery-easyui-1.5.5.3/themes/icon.css" />
+<script src="../static/jquery-easyui-1.5.5.3/jquery.min.js"></script>
+<script src="../webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+<script src="../static/layer-v3.1.1/layer/layer.js"></script>
+<script src="../static/js/index.js"></script>
+<script src="../static/jquery-easyui-1.5.5.3/jquery.easyui.min.js"></script>
+<script src="../static/jquery-easyui-1.5.5.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#t_user").datagrid({
+			idField: 'id',
+			title: '租户列表',
+			fitColumns: true,
+			width: '100%',
+			striped: true,
+			loadMsg: '数据正在加载...',
+			rownumbers: true,
+			url: 'list',
+			frozenColumns: [
+				[
+					{
+						field: 'ck',
+						width: 50,
+						checkbox: true
+					}
+				]
+			],
+			columns: [
+				[
+					{
+						field: 'id',
+						title: 'id',
+						width: 100,
+						align: 'center'
+					},{
+						field: 'name',
+						title: '租户名称',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'linkman',
+						title: '联系人',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'phone',
+						title: '联系电话',
+						width: 200,
+						align: 'center'
+					},{
+						field: 'lesseeAdmin',
+						title: '租户管理员',
+						width: 200,
+						align: 'center',
+						formatter: function(value){   //easyui取嵌套类对象的值
+							return value.unit;
+						}
+					}
+				]
+			],
+			pagination: true,
+			pageSize: 10,
+			pageList: [3, 5, 10, 20, 25, 50],
+			toolbar: [
+				{
+					text: '新增授权',
+					iconCls: 'icon-add',
+					handler: function(){
+						var arr = $('#t_user').datagrid('getSelections');
+						if(arr.length != 1){
+							$.messager.show({
+								title: '提示信息',
+								msg: '选中一行添加授权！'
+							});
+						}else{
+							$('#mydialog').dialog({
+								title: '新增授权'
+							});
+							$('#myform input').val("");
+							$('#myform').form('load', {
+								lessee:arr[0].id
+							});
+							$('#mydialog').dialog('open');
+						}
+					}
+				}
+			]
+		});
+		
+		//提交表单方法
+		$("#btn1").click(function(){
+			var month = $("#month").val();
+			var cost = $("#cost").val();
+			if($('#myform').form('validate')){
+				if(!(/^[0-9]+.?[0-9]*$/).test(month)){
+					layer.msg("请输入合法月份", {icon: 2});
+				}else if(!(/^[0-9]+.?[0-9]*$/).test(cost)){
+					layer.msg("请输入合法金额", {icon: 2});
+				}else{
+					$.ajax({
+						type: 'post',
+						url: '../accredit/save',
+						cache: false, 
+						data: $('#myform').serialize(),
+						dataType: 'json',
+						success: function(){
+							$("#mydialog").dialog('close');
+							$('#t_user').datagrid('reload');
+							$.messager.show({
+								title: '提示信息',
+								msg: '操作成功！'
+							});
+						}
+					});
+				}
+			}else{
+				$.messager.show({
+					title: '提示信息',
+					msg: '数据验证不通过，不能保存'
+				});
+			}
+		});
+		
+		//关闭窗口按钮
+		$("#btn2").click(function(){
+			$("#mydialog").dialog('close');
+		});
+		
+		//查询
+		$('#searchbtn').click(function(){
+			$('#t_user').datagrid('load', serializeForm($('#mysearch').form()));
+		});
+		
+		//清除查询
+		$('#clearbtn').click(function(){
+			$('#mysearch').form('clear');
+			$("#t_user").datagrid('load', {});
+		});
+		
+		$("#beginDate").datebox({
+			width: 200,
+			editable: false
+		});
+		
+		//js方法，序列化表单
+		function serializeForm(form){
+			var obj = {};
+			$('#id').val("1");
+			$.each(form.serializeArray(), function(index){
+				if(obj[this['name']]){
+					obj[this['name']] = obj[this['name']] + ',' + this['value'];
+				}else{
+					obj[this['name']] = this['value'];
+				}
+			});
+			return obj;
+		}
+	});
+	function fun_tc(){
+		layer.confirm("你确定退出吗？", {
+			btn:['确定', '取消']
+		}, function(){ 
+			window.location.href="../logout1";
+			layer.msg("已退出", {icon: 1});
+		});
+	}
+</script>
+<style type="text/css">
+	#home_1{
+		background: white;
+		width: 90%;
+		margin: 30px auto;
+		padding: 20px 35px;
+	}
+	#ss{
+		margin-bottom: 20px;
+	}
+	#mydialog tr td{
+		height: 50px;
+		text-align: right;
+	}
+	#mydialog tr td input{
+		width: 200px;
+	}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top" id="nav" style="margin-bottom: 0px;">
+		<div class="navbar-header" style="background: red;">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" style="background: #F8F8F8;" data-target="#menu">
+	        	<span class="sr-only">展开导航</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span> 
+	       </button>
+			<a class="navbar-brand" id="logo" href="">电子发票管理系统</a>
+		</div>
+		
+		<div class="collapse navbar-collapse" id="menu">
+			<ul class="nav navbar-nav" id = "mytab">
+				<li><a><span class="glyphicon glyphicon-list" id="dhl"></span></a></li>
+			</ul>
+			
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="../main1"><span class="glyphicon glyphicon-home"></span> 首页</a></li>
+				<li class="dropdown">
+					<a href="" class="dropdown-toggle" data-toggle="dropdown">
+						<span class="glyphicon glyphicon-user"></span>
+						<span sec:authorize="hasRole('ROLE_SYSTEM')"> 开发者 </span>
+						<span sec:authorize="!hasRole('ROLE_SYSTEM')" sec:authentication="principal.name"></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu pull-right">
+						<li onclick="fun_tc()"><a><span class="glyphicon glyphicon-log-out"></span>&emsp;安全退出</a></li>
+					</ul>
+				</li>
+				<li><a></a></li>
+				<li><a></a></li>
+			</ul>
+		</div>
+	</nav>
+	
+	<div id="dhl1">
+		<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa" style="background: #000;"><a style="color: white;">租户管理</a></p>
+		<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../accredit/all">授权管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../lesseeAdmin/all">租户管理员管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../journal/all">用户操作日志</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../invoice/statistics">统计功能</a></p>
+	</div>
+	
+	<div id="home">
+		<div id="home_1">
+			<ul class="breadcrumb">
+				<li><span class="glyphicon glyphicon-home"></span>&emsp;当前位置：</li>
+				<li><a class="active">租户管理</a></li>
+			</ul>
+			<div id="ss"> 
+				<form id="mysearch" method="post">
+					<input type="hidden" name = "lessee" id="lessee">
+					<div class="col-md-3">			
+						<div class="input-group">
+							<span class="input-group-addon">租户名称</span>
+							<input type="text" class="form-control" name="name" placeholder="租户名称">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="input-group">
+							<span class="input-group-addon">租户管理员</span>
+							<input type="text" class="form-control" name="unit" placeholder="租户管理员">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="input-group">
+							<span class="input-group-addon">联系人</span>
+							<input type="text" class="form-control" name="linkman" placeholder="联系人">
+						</div>
+					</div>
+					<div class="btn-group">
+						<button id="searchbtn" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> 查询</button>
+						<button id="clearbtn" class="btn btn-info"><span class="glyphicon glyphicon-trash"></span> 清空</button>
+					</div>
+				</form>
+			</div>
+			
+			<table id = "t_user"></table><br>
+			
+			<div id = "mydialog" title="修改授权" modal="true"  draggable=false class="easyui-dialog" closed=true style="width:400px;">
+				<form action="" method="post" id = "myform">
+					<input type="hidden" name = "lessee" value="">
+					<table style="margin-left: 20px; margin-top: 10px; margin-bottom: 10px;">
+						<tr>
+							<td>开始日期：</td>
+							<td><input type="text" name = "beginDate" id="beginDate" class="easyui-validatebox form-control" required=true value="" ></td>
+						</tr>
+						<tr>
+							<td>使用期限（月）：</td>
+							<td><input type="text" name = "month" id="month" class="easyui-validatebox form-control" required=true missingMessage="使用期限不能为空" value="" ></td>
+						</tr>
+						<tr>
+							<td>缴纳费用：</td>
+							<td><input type="text" name = "cost" id="cost" class="easyui-validatebox form-control" required=true missingMessage="缴纳费用不能为空" value="" ></td>
+						</tr>
+						<tr>
+							<td colspan="2" align="center">
+								<a id="btn1" class="btn btn-info">确定</a>
+								<a id="btn2" class="btn btn-danger">关闭</a>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>电子发票管理系统—电子发票管理</title>
+<link href="../webjars/bootstrap/3.3.7-1/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="../webjars/bootstrap/3.3.7-1/css/bootstrap-theme.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="../static/jquery-easyui-1.5.5.3/themes/default/easyui.css" />
+<link rel="stylesheet" href="../static/jquery-easyui-1.5.5.3/themes/icon.css" />
+<script src="../static/jquery-easyui-1.5.5.3/jquery.min.js"></script>
+<script src="../webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+<script src="../static/layer-v3.1.1/layer/layer.js"></script>
+<script src="../static/jquery-easyui-1.5.5.3/jquery.easyui.min.js"></script>
+<script src="../static/jquery-easyui-1.5.5.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$('#endDate').datebox({
+			editable: false
+		});
+		$("#t_user").datagrid({
+			idField: 'id',
+			title: '电子发票列表',
+			width: '100%',
+			fitColumns: true,
+			striped: true,
+			loadMsg: '数据正在加载...',
+			rownumbers: true,
+			url: 'list',
+			frozenColumns: [
+				[
+					{     
+						field: 'ck',
+						width: 50,
+						checkbox: true
+					}
+				]
+			],
+			columns: [
+				[
+					{
+						field: 'number',
+						title: '发票号码',
+						width: 100,
+						align: 'center'
+					},{
+						field: 'code',
+						title: '发票代码',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'money',
+						title: '金额',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'date',
+						title: '开票时间',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'name',
+						title: '报销人',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'endDate',
+						title: '报销时间',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'Unit',
+						title: '开票单位',
+						width: 160,
+						align: 'center',
+						formatter: function(value, rec){ 
+							return rec.lessee.name;
+						}
+					},{
+						field: 'state',
+						title: '状态',
+						width: 150,
+						align: 'center'
+					}
+				]
+			],
+			pagination: true,
+			pageSize: 10,
+			pageList: [3, 5, 10, 20, 25, 50],
+			toolbar: [
+				{
+					text: '新增电子发票',
+					iconCls: 'icon-add',
+					handler: function(){
+						$('#mydialog1').dialog({
+							title: '新增电子发票'
+						});
+						$('#myform1').get(0).reset();
+						$('#myform1 input').val("");
+						$('#mydialog1').dialog('open');
+					}
+				},{
+					text: '报销',
+					iconCls: 'icon-edit',
+					handler: function(){
+						var arr = $('#t_user').datagrid('getSelections');
+						if(arr.length != 1){
+							$.messager.show({
+								title: '提示信息',
+								msg: '选中一行记录进行报销！'
+							});
+						}else if(arr[0].state == "已报销"){
+							$.messager.show({
+								title: '提示信息',
+								msg: '你选的记录已报销！'
+							});
+						}else{
+							$('#mydialog').dialog({
+								title: '报销'
+							});
+							$('#mydialog').dialog('open');
+							$('#myform input').val("");
+							$('#myform').form('load', { 
+								id:arr[0].id,
+								number:arr[0].number,
+								code:arr[0].code,
+								serial:arr[0].serial,
+								money:arr[0].money,
+								date:arr[0].date,
+								serial:arr[0].serial,
+								lessee:arr[0].lessee.id
+							});
+						}
+					}
+				}
+			]
+		});
+		//提交表单方法
+		$("#btn1").click(function(){
+			if($('#myform').form('validate')){
+				$.ajax({
+					type: 'post',
+					url: 'save',
+					cache: false, 
+					data: $('#myform').serialize(),
+					dataType: 'json',
+					success: function(data){
+						$("#mydialog").dialog('close');
+						$('#t_user').datagrid('reload');
+						$.messager.show({
+							title: '提示信息',
+							msg: '操作成功！'
+						});
+					} 
+				});
+			}else{
+				$.messager.show({
+					title: '提示信息',
+					msg: '数据验证不通过，不能保存'
+				});
+			}
+		});
+		//提交表单方法
+		$("#btn3").click(function(){
+			if($('#myform1').form('validate')){
+				var money = $("#money").val();
+				var number = $("#number").val();
+				var data = $("#form").serialize();
+				if(money == "" || money == null){
+					layer.msg("请输入金额！", {icon: 2});
+				}else if(number == "" || number == null){
+					layer.msg("请输入编号!", {icon: 2});
+				}else if((!(/^[0-9]+.?[0-9]*$/).test(money))){
+					layer.msg("请输入合法金额!", {icon: 2});
+				}else{
+					$.post('number', {number: number}, function(data1){
+						if(!data1){		
+							$.ajax({
+								type: 'post',
+								url: 'save',
+								cache: false, 
+								data: $('#myform1').serialize(),
+								dataType: 'json',
+								success: function(data){
+									$("#mydialog1").dialog('close');
+									$('#t_user').datagrid('reload');
+									$.messager.show({
+										title: '提示信息',
+										msg: '操作成功！'
+									});
+								} 
+							});
+						}else{
+							layer.msg("此编号已添加！", {icon: 2});
+						}
+					});
+				}
+			}else{
+				$.messager.show({
+					title: '提示信息',
+					msg: '数据验证不通过，不能保存'
+				});
+			}
+		});
+		//关闭窗口按钮
+		$("#btn2").click(function(){
+			$("#mydialog").dialog('close');
+		});
+		
+		//关闭窗口按钮
+		$("#btn4").click(function(){
+			$("#mydialog1").dialog('close');
+		});
+		
+		//查询
+		$('#searchbtn').click(function(){
+			$('#t_user').datagrid('load', serializeForm($('#mysearch').form()));
+		});
+		
+		//清除查询
+		$('#clearbtn').click(function(){
+			$('#mysearch').form('clear');
+			$("#t_user").datagrid('load', {});
+		});
+	});
+	//js方法，序列化表单
+	function serializeForm(form){
+		var obj = {};
+		$('#id').val("1");
+		$.each(form.serializeArray(), function(index){
+			if(obj[this['name']]){
+				obj[this['name']] = obj[this['name']] + ',' + this['value'];
+			}else{
+				obj[this['name']] = this['value'];
+			}
+		});
+		return obj;
+	}
+	function fun_tc(){
+		layer.confirm("你确定退出吗？", {
+			btn:['确定', '取消']
+		}, function(){ 
+			window.location.href="../logout1";
+			layer.msg("已退出", {icon: 1});
+		});
+	}
+	function fun(str){
+		$.post('number', {number: str}, function(data){
+			if(data){
+				layer.msg("此编号已添加！", {icon: 2});
+			}
+		});
+	}
+</script>
+<style type="text/css">
+	*{
+		margin: 0px;
+		padding: 0px;
+	}
+	body{
+		background: url(../static/img/beijin.jpg);
+	}
+	#home{
+		margin-top: 75px;
+	}
+	#mytab li a{
+		cursor: pointer;
+	}
+	.error{
+		color: red;
+	}
+	#home_1{
+		background: white;
+		width: 90%;
+		margin: 20px auto;
+		padding: 20px 35px;
+	}
+	#ss{
+		margin: 20px;
+	}
+	#mydialog tr td{
+		height: 50px;
+		text-align: right;
+	}
+	#mydialog tr td input{
+		width: 230px;
+	}
+	#mydialog1 tr td{
+		height: 50px;
+		text-align: right;
+	}
+	#mydialog1 tr td input{
+		width: 240px;
+	}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header" style="margin-left: 50px;">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu">
+		        	<span class="sr-only">展开导航</span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span> 
+		        </button>
+				<a class="navbar-brand" href="">电子发票管理系统</a>
+			</div>
+			
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="">
+							欢迎您：
+							<span sec:authorize="hasRole('ROLE_SYSTEM')"> 开发者 </span>
+							<span sec:authorize="!hasRole('ROLE_SYSTEM')" sec:authentication="principal.name"></span>
+						</a>
+					</li>
+				</ul>
+			
+				<ul class="nav navbar-nav navbar-right" id="mytab">
+					<li><a href="../main1"><span class="glyphicon glyphicon-home"></span> 首页</a></li>
+					<li sec:authorize="hasRole('ROLE_USER')"><a href="../user/updata"><span class="glyphicon glyphicon-pencil"></span> 修改密码</a></li>
+					<li class="active" sec:authorize="hasRole('ROLE_USER')"><a href=""><span class="glyphicon glyphicon-globe"></span> 电子发票管理</a></li>
+					<li onclick="fun_tc()" sec:authorize="hasRole('ROLE_USER')"><a><span class="glyphicon glyphicon-off"></span> 注销</a></li>
+					<li><a href=""></a></li>
+					<li><a href=""></a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	
+	<div id="home">
+		<div id="home_1">
+			<ul class="breadcrumb">
+				<li><span class="glyphicon glyphicon-home"></span>&emsp;当前位置：</li>
+				<li><a class="active">电子发票管理</a></li>
+			</ul>
+			
+			<div id="ss"> 
+				<form id="mysearch" method="post">
+					<input type="hidden" name = "id" id="id">
+					<div class="col-md-3">
+						<div class="input-group">
+							<span class="input-group-addon">报销时间</span>
+							<input type="text" class="form-control" style="width: 75%;" name="endDate" id="endDate" placeholder="报销时间">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="input-group">
+							<span class="input-group-addon">发票号码</span>
+							<input type="text" class="form-control" name="number" placeholder="发票号码">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="input-group">
+							<span class="input-group-addon">报销人</span>
+							<input type="text" class="form-control" name="name" placeholder="报销人">
+						</div>
+					</div>
+					<div class="btn-group">
+						<button id="searchbtn" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> 查询</button>
+						<button id="clearbtn" class="btn btn-info"><span class="glyphicon glyphicon-trash"></span> 清空</button>
+						<!-- <a href="" class="btn btn-info" data-toggle="modal" data-target="#exampleModal"><span class="glyphicon glyphicon-plus"></span> 添加发票</a> -->
+					</div>
+				</form>
+			</div>
+			
+			<table id = "t_user"></table><br>
+			
+			<div id="mydialog" title="报销" modal=true draggable=false class="easyui-dialog" closed=true style="width:400px;">
+				<form action="" method="post" id = "myform">
+					<table style="margin-left: 30px; margin-top: 10px; margin-bottom: 10px;">
+						<tr>
+							<input type="hidden" name = "id" value="">
+							<input type="hidden" name = "number" value="">
+							<input type="hidden" name = "code" class="easyui-validatebox" value="">
+							<input type="hidden" name = "serial" class="easyui-validatebox" value="">
+							<input type="hidden" name = "lessee" class="easyui-validatebox" value="">
+							<input type="hidden" name = "money" class="easyui-validatebox" value="">
+							<input type="hidden" name = "date" class="easyui-validatebox" value="">
+							<input type="hidden" name = "serial" class="easyui-validatebox" value="">
+							<td>报销人：</td>
+							<td><input type="text" name = "name" class="easyui-validatebox form-control" required=true label="报销人" missingMessage="报销人必填!" value="" ></td>
+						</tr>
+						<td colspan="2" align="center">
+							<a id="btn1" class="btn btn-info">确定</a>
+							<a id="btn2" class="btn btn-danger">关闭</a>
+						</td>
+					</table>
+				</form>
+			</div>
+			
+			<div id="mydialog1" title="新增电子发票" modal=true draggable=false class="easyui-dialog" closed=true style="width:400px;">
+				<form action="" method="post" id = "myform1">
+					<table style="margin-left: 30px; margin-top: 10px; margin-bottom: 10px;">
+						<tr>
+							<td>金额：</td>
+							<td><input type="text" name="money" id="money" class="easyui-validatebox form-control" placeholder="金额" required=true></td>
+						</tr>
+						<tr>
+							<td>发票号码：</td>
+							<td><input type="text" name="number" id="number" class="easyui-validatebox form-control" onchange="fun(this.value);" placeholder="发票号码" required=true></td>
+						</tr>
+						<td colspan="2" align="center">
+							<a id="btn3" class="btn btn-info">确定</a>
+							<a id="btn4" class="btn btn-danger">关闭</a>
+						</td>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

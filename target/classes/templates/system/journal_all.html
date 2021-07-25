@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>电子发票管理系统—操作日志</title>
+<link href="../webjars/bootstrap/3.3.7-1/css/bootstrap.css" rel="stylesheet" type="text/css">
+<link href="../static/css/index.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="../static/jquery-easyui-1.5.5.3/themes/default/easyui.css" />
+<link rel="stylesheet" href="../static/jquery-easyui-1.5.5.3/themes/icon.css" />
+<script src="../static/jquery-easyui-1.5.5.3/jquery.min.js"></script>
+<script src="../webjars/bootstrap/3.3.7-1/js/bootstrap.js"></script>
+<script src="../static/layer-v3.1.1/layer/layer.js"></script>
+<script src="../static/js/index.js"></script>
+<script src="../static/jquery-easyui-1.5.5.3/jquery.easyui.min.js"></script>
+<script src="../static/jquery-easyui-1.5.5.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#t_user").datagrid({
+			idField: 'id',
+			title: '操作日志列表',
+			width: '100%',
+			fitColumns: true,
+			striped: true,
+			loadMsg: '数据正在加载...',
+			singleSelect: true,
+			rownumbers: true,
+			url: 'list',
+			columns: [
+				[
+					{
+						field: 'id',
+						title: 'id',
+						width: 100,
+						align: 'center'
+					},{
+						field: 'date',
+						title: '操作时间',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'operationName',
+						title: '操作名称',
+						width: 150,
+						align: 'center'
+					},{
+						field: 'username',
+						title: '操作者用户名',
+						width: 150,
+						align: 'center'
+					}
+				]
+			],
+			pagination: true,
+			pageSize: 10,
+			pageList: [3, 5, 10, 20, 25, 50]
+		});
+		//查询
+		$('#searchbtn').click(function(){
+			$('#t_user').datagrid('load', serializeForm($('#mysearch').form()));
+		});
+		//清除查询
+		$('#clearbtn').click(function(){
+			$('#mysearch').form('clear');
+			$("#t_user").datagrid('load', {});
+		});
+	});
+	//js方法，序列化表单
+	function serializeForm(form){
+		var obj = {};
+		$('#id').val("1");
+		$.each(form.serializeArray(), function(index){
+			if(obj[this['name']]){
+				obj[this['name']] = obj[this['name']] + ',' + this['value'];
+			}else{
+				obj[this['name']] = this['value'];
+			}
+		});
+		return obj;
+	}
+	function fun_tc(){
+		layer.confirm("你确定退出吗？", {
+			btn:['确定', '取消']
+		}, function(){ 
+			window.location.href="../logout1";
+			layer.msg("已退出", {icon: 1});
+		});
+	}
+</script>
+<style type="text/css">
+	#home_1{
+		background: white;
+		width: 90%;
+		margin: 30px auto;
+		padding: 20px 35px;
+	}
+	#ss{
+		margin-bottom: 20px;
+	}
+	#mydialog tr td{
+		height: 50px;
+		text-align: right;
+	}
+	#mydialog tr td input{
+		width: 200px;
+	}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top" id="nav" style="margin-bottom: 0px;">
+		<div class="navbar-header" style="background: red;">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" style="background: #F8F8F8;" data-target="#menu">
+	        	<span class="sr-only">展开导航</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span> 
+	       </button>
+			<a class="navbar-brand" id="logo" href="">电子发票管理系统</a>
+		</div>
+		
+		<div class="collapse navbar-collapse" id="menu">
+			<ul class="nav navbar-nav" id = "mytab">
+				<li><a><span class="glyphicon glyphicon-list" id="dhl"></span></a></li>
+			</ul>
+			
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="../main1"><span class="glyphicon glyphicon-home"></span> 首页</a></li>
+				<li class="dropdown">
+					<a href="" class="dropdown-toggle" data-toggle="dropdown">
+						<span class="glyphicon glyphicon-user"></span>
+						<span sec:authorize="hasRole('ROLE_SYSTEM')"> 开发者 </span>
+						<span sec:authorize="!hasRole('ROLE_SYSTEM')" sec:authentication="principal.name"></span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu pull-right">
+						<li onclick="fun_tc()"><a><span class="glyphicon glyphicon-log-out"></span>&emsp;安全退出</a></li>
+					</ul>
+				</li>
+				<li><a></a></li>
+				<li><a></a></li>
+			</ul>
+		</div>
+	</nav>
+	
+	<div id="dhl1">
+		<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../lessee/all">租户管理</a></p>
+		<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../accredit/all">授权管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../lesseeAdmin/all">租户管理员管理</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa" style="background: #000;"><a style="color: white;">用户操作日志</a></p>
+    	<p sec:authorize="hasRole('ROLE_SYSTEM')" class="aaa"><a href="../invoice/statistics">统计功能</a></p>
+	</div>
+	
+	<div id="home">
+		<div id="home_1">
+			<ul class="breadcrumb">
+				<li><span class="glyphicon glyphicon-home"></span>&emsp;当前位置：</li>
+				<li><a class="active">操作日志</a></li>
+			</ul>
+			
+			<div id="ss"> 
+				<form id="mysearch" method="post">
+					<input type="hidden" name = "id" id="id">
+					<div class="col-md-3">			
+						<div class="input-group">
+							<span class="input-group-addon">操作名称</span>
+							<input type="text" class="form-control" name="operationName" placeholder="操作名称">
+						</div>
+					</div>
+					<div class="col-md-3">			
+						<div class="input-group">
+							<span class="input-group-addon">操作时间</span>
+							<input type="text" class="form-control" name="date" placeholder="操作时间">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="input-group">
+							<span class="input-group-addon">操作者用户名</span>
+							<input type="text" class="form-control" name="username" placeholder="操作者用户名">
+						</div>
+					</div>
+					<div class="btn-group">
+						<button id="searchbtn" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> 查询</button>
+						<button id="clearbtn" class="btn btn-info"><span class="glyphicon glyphicon-trash"></span> 清空</button>
+					</div>
+				</form>
+			</div>
+			
+			<table id = "t_user"></table><br>
+		</div>
+	</div>
+</body>
+</html>
