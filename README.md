@@ -1,6 +1,6 @@
 # 电子发票管理系统
 
-视频演示链接：https://live.csdn.net/v/181389
+视频演示链接：https://www.bilibili.com/video/BV1mP4y1s7jC/
 
 功能介绍
 
